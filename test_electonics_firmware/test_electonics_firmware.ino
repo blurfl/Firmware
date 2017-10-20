@@ -8,19 +8,19 @@ It also prints "Connection Good!" every 500ms to test the serial connection.
 It is a good idea to remove the chains from the motors before running this test.
 */
 
-#define IN1 9
-#define IN2 8
-#define IN3 11
-#define IN4 10
-#define IN5 12
-#define IN6 13
+#define IN1 6   //9
+#define IN2 4   //8
+#define IN3 9   //11
+#define IN4 7   //10
+#define IN5 10  //12
+#define IN6 11  //13
 
-#define ENA 6
-#define ENB 7
-#define ENC 5
+#define ENA 5  //6
+#define ENB 8  //7
+#define ENC 12 //5
 
 void setup(){
-    Serial.begin(19200);
+    Serial.begin(57600);
     
     //set enable pins to outputs
     pinMode(ENA,   OUTPUT); 
@@ -53,20 +53,16 @@ void loop(){
     digitalWrite(IN6,   HIGH);
     
     
-    Serial.println("Connection Good!");
-    delay(500);
-    Serial.println("Connection Good!");
-    delay(500);
+    Serial.println("Direction A");
+    delay(2000);
     
     //stop all motors
     analogWrite(ENA, 0);
     analogWrite(ENB, 0);
     analogWrite(ENC, 0);
     
-    Serial.println("Connection Good!");
-    delay(500);
-    Serial.println("Connection Good!");
-    delay(500);
+    Serial.println("Stopped");
+    delay(2000);
     
     //enable all motors
     analogWrite(ENA, 255);
@@ -81,19 +77,15 @@ void loop(){
     digitalWrite(IN5,   HIGH); 
     digitalWrite(IN6,   LOW);
     
-    Serial.println("Connection Good!");
-    delay(500);
-    Serial.println("Connection Good!");
-    delay(500);
+    Serial.println("Direction B");
+    delay(2000);
     
     //stop all motors
     analogWrite(ENA, 0);
     analogWrite(ENB, 0);
     analogWrite(ENC, 0);
     
-    Serial.println("Connection Good!");
-    delay(500);
-    Serial.println("Connection Good!");
-    delay(500);
+    Serial.println("Stopped");
+    delay(2000);
 
 }

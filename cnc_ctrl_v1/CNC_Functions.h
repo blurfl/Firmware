@@ -121,13 +121,12 @@ int   setupPins(){
         IN2 = 4;
         IN3 = 9;
         IN4 = 7;
-        IN5 = 10;
-        IN6 = 11;
+        IN5 = 10; // 11
+        IN6 = 11; // 12 
 
         ENA = 5;
         ENB = 8;
         ENC = 12;
-        
         return 0;
     }
 }

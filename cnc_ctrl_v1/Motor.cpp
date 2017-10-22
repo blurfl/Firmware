@@ -71,40 +71,64 @@ void Motor::write(int speed){
     Sets motor speed from input. Speed = 0 is stopped, -255 is full reverse, 255 is full ahead.
     */
     if (_attachedState == 1){
-        
-        //linearize the motor
-        //speed = _convolve(speed);
-        
-        //set direction range is 0-180
-        if (speed > 0){
-            digitalWrite(_pin1 , HIGH);
-            digitalWrite(_pin2 , LOW );
-            speed = speed;
-        }
-        else if (speed == 0){
-            speed = speed;
-        }
-        else{
-            digitalWrite(_pin1 , LOW);
-            digitalWrite(_pin2 , HIGH );
-            speed = speed;
-        }
-        
-        //enforce range
-        speed = constrain(speed, -255, 255);
-        
-        speed = abs(speed); //remove sign from input because direction is set by control pins on H-bridge
-        
-        int pwmFrequency = round(speed);
-        
-        if(_pwmPin == 12){
-            pwmFrequency = map(pwmFrequency, 0, 255, 0, 1023);  //Scales 0-255 to 0-1023
-            Timer1.pwm(2, pwmFrequency);  //Special case for pin 12 due to timer blocking analogWrite()
-        }
-        else{
-            analogWrite(_pwmPin, pwmFrequency);
-        }
-        
+          //linearize the motor
+          //speed = _convolve(speed);
+
+         Serial.print(F("motor.write _pwmPin is "));
+         Serial.println(_pwmPin);
+
+        if (_pwmPin < 0) {  // TLE5206
+          Serial.print(F("TLE5206 motor.write speed: "));
+          Serial.println(speed);
+          //set direction range is 0-180
+          //enforce range
+          speed = constrain(speed, -255, 255);
+          int pwmFrequency = round(abs(speed));
+          if (speed > 0){
+              analogWrite(_pin1 , pwmFrequency);
+              analogWrite(_pin2 , 0 );
+          }
+          else if (speed == 0){
+              analogWrite(_pin1 , 0);
+              analogWrite(_pin2 , 0 );
+          }
+          else{
+              analogWrite(_pin1 , 0 );
+              analogWrite(_pin2 , pwmFrequency);
+          }
+        } 
+        else 
+        {  // original Maslow H-bridge
+          //set direction range is 0-180
+          if (speed > 0){
+              digitalWrite(_pin1 , HIGH);
+              digitalWrite(_pin2 , LOW );
+              speed = speed;
+          }
+          else if (speed == 0){
+              speed = speed;
+          }
+          else{
+              digitalWrite(_pin1 , LOW);
+              digitalWrite(_pin2 , HIGH );
+              speed = speed;
+          }
+          
+          //enforce range
+          speed = constrain(speed, -255, 255);
+          
+          speed = abs(speed); //remove sign from input because direction is set by control pins on H-bridge
+          
+          int pwmFrequency = round(speed);
+          
+          if(_pwmPin == 12){
+              pwmFrequency = map(pwmFrequency, 0, 255, 0, 1023);  //Scales 0-255 to 0-1023
+              Timer1.pwm(2, pwmFrequency);  //Special case for pin 12 due to timer blocking analogWrite()
+          }
+          else{
+              analogWrite(_pwmPin, pwmFrequency);
+          }
+       } 
     }
 }
 
@@ -112,26 +136,49 @@ void Motor::directWrite(int voltage){
     /*
     Write directly to the motor, ignoring if the axis is attached or any applied calibration.
     */
-    
-    if (voltage > 0){
-        digitalWrite(_pin1 , HIGH);
-        digitalWrite(_pin2 , LOW );
-    }
-    else if (voltage == 0){
-        voltage = voltage;
-    }
-    else{
-        digitalWrite(_pin1 , LOW);
-        digitalWrite(_pin2 , HIGH );
-    }
-    
-    if(_pwmPin == 12){
-        voltage = abs(voltage);
-        voltage = map(voltage, 0, 255, 0, 1023);  //Scales 0-255 to 0-1023
-        Timer1.pwm(2, voltage);  //Special case for pin 12 due to timer blocking analogWrite()
-    }
-    else{
-        analogWrite(_pwmPin, abs(voltage));
+
+    if (_attachedState == 1){
+         Serial.print(F("motor.directWrite _pwmPin is "));
+         Serial.println(_pwmPin);
+
+      if (_pwmPin < 0) {  // TLE5206
+        Serial.print(F("TLE5206 motor.directWrite voltage: "));
+        Serial.println(voltage);
+        if (voltage > 0){
+            analogWrite(_pin1 , abs(voltage));
+            analogWrite(_pin2 , 0 );
+        }
+        else if (voltage == 0){
+            voltage = voltage;
+            analogWrite(_pin1 , 0);
+            analogWrite(_pin2 , 0 );
+        }
+        else{
+            analogWrite(_pin1 , 0);
+            analogWrite(_pin2 , abs(voltage));
+        }
+      } else {  // original Maslow H-bridge  
+        if (voltage > 0){
+            digitalWrite(_pin1 , HIGH);
+            digitalWrite(_pin2 , LOW );
+        }
+        else if (voltage == 0){
+            voltage = voltage;
+        }
+        else{
+            digitalWrite(_pin1 , LOW);
+            digitalWrite(_pin2 , HIGH );
+        }
+        
+        if(_pwmPin == 12){
+            voltage = abs(voltage);
+            voltage = map(voltage, 0, 255, 0, 1023);  //Scales 0-255 to 0-1023
+            Timer1.pwm(2, voltage);  //Special case for pin 12 due to timer blocking analogWrite()
+        }
+        else{
+            analogWrite(_pwmPin, abs(voltage));
+        }
+      }
     }
 }
 

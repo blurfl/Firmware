@@ -24,7 +24,16 @@ void setup(){
     int boardRev = setupPins();
     Serial.print(F("setupPins returns "));
     Serial.println(boardRev);
-    
+
+    Serial.print(F("ENA is "));
+    Serial.println(ENA);
+
+    Serial.print(F("ENB is "));
+    Serial.println(ENB);
+
+    Serial.print(F("ENC is "));
+    Serial.println(ENC);
+
     if(pcbRevisionIndicator == 0){
         Serial.println(F("PCB v1.1 Detected"));
     } 

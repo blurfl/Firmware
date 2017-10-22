@@ -273,20 +273,22 @@ void   Axis::test(){
     
     int i = 0;
     double encoderPos = motorGearboxEncoder.encoder.read(); //record the position now
-    
+    Serial.print(encoderPos);
     //move the motor
     while (i < 1000){
         motorGearboxEncoder.motor.directWrite(255);
         i++;
         delay(1);
     }
-    
+   
     //check to see if it moved
     if(encoderPos - motorGearboxEncoder.encoder.read() > 500){
-        Serial.println(F("Direction 1 - Pass"));
+        Serial.print(encoderPos - motorGearboxEncoder.encoder.read());
+        Serial.println(F(" Direction 1 - Pass"));
     }
     else{
-        Serial.println(F("Direction 1 - Fail"));
+        Serial.print(encoderPos - motorGearboxEncoder.encoder.read());
+        Serial.println(F(" Direction 1 - Fail"));
     }
     
     //record the position again

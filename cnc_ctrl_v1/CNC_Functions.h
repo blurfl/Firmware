@@ -124,10 +124,10 @@ int   setupPins(){
         IN5 = 10; // 11
         IN6 = 11; // 12 
 
-        ENA = 5;
-        ENB = 8;
-        ENC = 12;
-        return 0;
+        ENA = -1 ; //5;
+        ENB = -1 ; //8;
+        ENC = -1 ; //12;
+        return 2; //0;
     }
 }
 

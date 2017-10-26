@@ -71,11 +71,13 @@ int ENC;
 //#define ENCODERSTEPS   8148.0 //7*291*4 --- 7ppr, 291:1 gear ratio, quadrature encoding
 //#define ZENCODERSTEPS  7560.0 //7*270*4 --- 7ppr, 270:1 gear ratio, quadrature encoding
 
-#define AUX1 17
-#define AUX2 16
-#define AUX3 15
-#define AUX4 14
+#define AUX1 14
+#define AUX2 15
+#define AUX3 16
+#define AUX4 17
 #define Probe AUX4 // use this input for zeroing zAxis with G38.2 gcode
+#define AUX5 11
+#define AUX6 12
 
 int pcbRevisionIndicator = digitalRead(22);
 
@@ -121,8 +123,8 @@ int   setupPins(){
         IN2 = 4;
         IN3 = 9;
         IN4 = 7;
-        IN5 = 10; // 11
-        IN6 = 11; // 12 
+        IN5 = 29; // 11
+        IN6 = 30; // 12 
 
         ENA = -1 ; //5;
         ENB = -1 ; //8;

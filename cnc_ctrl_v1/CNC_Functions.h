@@ -112,24 +112,47 @@ int   setupPins(){
     }
     else{
         //PCB v1.1 Detected
-        ENCODER1A = 20;
-        ENCODER1B = 21;
-        ENCODER2A = 19;
-        ENCODER2B = 18;
-        ENCODER3A = 2;
-        ENCODER3B = 3;
-
-        IN1 = 6;
-        IN2 = 4;
-        IN3 = 9;
-        IN4 = 7;
-        IN5 = 29; // 11
-        IN6 = 30; // 12 
-
-        ENA = -1 ; //5;
-        ENB = -1 ; //8;
-        ENC = -1 ; //12;
-        return 2; //0;
+        #ifdef __AVR_ATmega2560__ //ARDUINO_AVR_MEGA2560
+            ENCODER1A = 20;
+            ENCODER1B = 21;
+            ENCODER2A = 19;
+            ENCODER2B = 18;
+            ENCODER3A = 2;
+            ENCODER3B = 3;
+    
+            IN1 = 6;
+            IN2 = 4;
+            IN3 = 9;
+            IN4 = 7;
+            IN5 = 11;
+            IN6 = 12; 
+    
+            ENA = 5;
+            ENB = 8;
+            ENC = 10;
+            return 0;
+          //Mega 2560 specific code
+          #elif __MK64FX512__ or __MK66FX1M0__ // TEENSY3.5 or TEENSY 3.6
+          //TEENSY 3.5 or 3.6 specific pins
+            ENCODER1A = 20;
+            ENCODER1B = 21;
+            ENCODER2A = 19;
+            ENCODER2B = 18;
+            ENCODER3A = 2;
+            ENCODER3B = 3;
+    
+            IN1 = 6;
+            IN2 = 4;
+            IN3 = 9;
+            IN4 = 7;
+            IN5 = 29; // 11
+            IN6 = 30; // 12 
+    
+            ENA = 5;
+            ENB = 8;
+            ENC = 10;
+            return 0;
+            #endif // 
     }
 }
 

@@ -49,10 +49,9 @@ void setup(){
     
     Serial.println(F("Grbl v1.00"));
     
-}
-
 #ifdef __AVR_ATmega2560__ //ARDUINO_AVR_MEGA2560
 //Mega 2560 specific code
+    #define MEGA_2560
     Serial.println(F("compiled for Mega"));
 #elif __MK64FX512__ // TEENSY35
 //TEENSY 3.5 specific code
@@ -68,6 +67,9 @@ void setup(){
     Serial.println(F("compiled for some other board"));
 //#error Unsupported hardware
 #endif
+
+}
+
 
 void runsOnATimer(){
     #if misloopDebug > 0

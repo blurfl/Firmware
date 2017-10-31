@@ -51,6 +51,24 @@ void setup(){
     
 }
 
+#ifdef __AVR_ATmega2560__ //ARDUINO_AVR_MEGA2560
+//Mega 2560 specific code
+    Serial.println(F("compiled for Mega"));
+#elif __MK64FX512__ // TEENSY35
+//TEENSY 3.5 specific code
+    #define TEENSY35
+    Serial.println(F("compiled for Teensy 3.5"));
+#elif __MK66FX1M0__ //TEENSY36 
+//TEENSY 3.6 specific code
+    #define TEENSY36
+    Serial.println(F("compiled for Teensy 3.6"));
+#elif ARDUINO_SAM_DUE 
+//Due specific code
+#else
+    Serial.println(F("compiled for some other board"));
+//#error Unsupported hardware
+#endif
+
 void runsOnATimer(){
     #if misloopDebug > 0
     if (inMovementLoop && !movementUpdated){

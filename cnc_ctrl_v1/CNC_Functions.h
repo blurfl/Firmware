@@ -14,7 +14,10 @@
     
 /*Right now this file is a catch all for functions which will be broken out into
 libraries*/
-    
+
+#ifdef __MK64FX512__ ||  __MK66FX1M0__  // TEENSY3.5 or TEENSY3.6
+    #define TEENSY
+#endif
     
 #include "Axis.h"
 #include "Kinematics.h"
@@ -1420,7 +1423,11 @@ void  executeBcodeLine(const String& gcodeLine){
     }
     
     if(gcodeLine.substring(0, 3) == "B05"){
+      #ifndef TEENSY
         Serial.print(F("Firmware Version "));
+      #else
+        Serial.print(F("Firmware TEENSY Version "));
+      #endif      
         Serial.println(VERSIONNUMBER);
         return;
     }

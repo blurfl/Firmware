@@ -71,10 +71,19 @@ int ENC;
 //#define ENCODERSTEPS   8148.0 //7*291*4 --- 7ppr, 291:1 gear ratio, quadrature encoding
 //#define ZENCODERSTEPS  7560.0 //7*270*4 --- 7ppr, 270:1 gear ratio, quadrature encoding
 
-#define AUX1 17
-#define AUX2 16
-#define AUX3 15
-#define AUX4 14
+#ifndef TEENSY //ARDUINO_AVR_MEGA2560
+  #define AUX1 17
+  #define AUX2 16
+  #define AUX3 15
+  #define AUX4 14
+#else          // TEENSY35 or TEENSY36
+  #define AUX1 14
+  #define AUX2 15
+  #define AUX3 16
+  #define AUX4 17
+  #define AUX5 11
+  #define AUX6 12
+#endif
 #define Probe AUX4 // use this input for zeroing zAxis with G38.2 gcode
 
 int pcbRevisionIndicator = digitalRead(22);
@@ -110,24 +119,43 @@ int   setupPins(){
     }
     else{
         //PCB v1.1 Detected
-        ENCODER1A = 20;
-        ENCODER1B = 21;
-        ENCODER2A = 19;
-        ENCODER2B = 18;
-        ENCODER3A = 2;
-        ENCODER3B = 3;
-
-        IN1 = 6;
-        IN2 = 4;
-        IN3 = 9;
-        IN4 = 7;
-        IN5 = 10;
-        IN6 = 11;
-
-        ENA = 5;
-        ENB = 8;
-        ENC = 12;
-        
+        #ifndef TEENSY
+          ENCODER1A = 20;
+          ENCODER1B = 21;
+          ENCODER2A = 19;
+          ENCODER2B = 18;
+          ENCODER3A = 2;
+          ENCODER3B = 3;
+  
+          IN1 = 6;
+          IN2 = 4;
+          IN3 = 9;
+          IN4 = 7;
+          IN5 = 10;
+          IN6 = 11;
+  
+          ENA = 5;
+          ENB = 8;
+          ENC = 12;
+        #else // TEENSY35 or TEENSY36
+          ENCODER1A = 20;
+          ENCODER1B = 21;
+          ENCODER2A = 19;
+          ENCODER2B = 18;
+          ENCODER3A = 2;
+          ENCODER3B = 3;
+  
+          IN1 = 6;
+          IN2 = 4;
+          IN3 = 7; 
+          IN4 = 9; 
+          IN5 = 10; 
+          IN6 = 29; 
+  
+          ENA = 5;
+          ENB = 8;
+          ENC = 30; 
+        #endif
         return 0;
     }
 }

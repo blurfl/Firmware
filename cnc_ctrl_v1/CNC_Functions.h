@@ -80,6 +80,7 @@ int ENC;
   #define AUX3 15
   #define AUX4 14
 #else          // TEENSY35 or TEENSY36
+// AUX pin numbers re-arranged for carrier PCB layout convenience
   #define AUX1 14
   #define AUX2 15
   #define AUX3 16
@@ -141,6 +142,8 @@ int   setupPins(){
           ENB = 8;
           ENC = 12;
         #else // TEENSY35 or TEENSY36
+// Pin numbers re-arranged for carrier PCB layout convenience
+//  and to make ENC and IN6 capable of PWM
           ENCODER1A = 20;
           ENCODER1B = 21;
           ENCODER2A = 19;

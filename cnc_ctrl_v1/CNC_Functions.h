@@ -167,6 +167,28 @@ int   setupPins(){
           ENA = 5;
           ENB = 8;
           ENC = 30; 
+
+        //MP1 - Right Motor
+//        ENCODER1A = 20;
+//        ENCODER1B = 21;
+//        IN1 = 6;
+//        IN2 = 4;
+//        ENA = 5;
+//        
+//        //MP2 - Z-axis
+//        ENCODER2A = 19;
+//        ENCODER2B = 18;
+//        IN3 = 7;
+//        IN4 = 9;
+//        ENB = 8;
+//        
+//        //MP3 - Left Motor
+//        ENCODER3A = 2;
+//        ENCODER3B = 3;
+//        IN5 = 10;
+//        IN6 = 29;
+//        ENC = 30;
+          
         #endif
         return 0;
     }

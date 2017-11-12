@@ -47,7 +47,7 @@ bool zAxisAttached = false;
 
 #define MILLIMETERS 1
 #define INCHES      25.4
-#define MAXFEED     900      //The maximum allowable feedrate in mm/min
+#define MAXFEED     1000      //The maximum allowable feedrate in mm/min
 #define MAXZROTMIN  12.60    // the maximum z rotations per minute
 #define LOOPINTERVAL 10000     // What is the frequency of the PID loop in microseconds
 
@@ -90,16 +90,22 @@ int ENC;
 #endif
 #define Probe AUX4 // use this input for zeroing zAxis with G38.2 gcode
 
-int pcbRevisionIndicator = digitalRead(22);
+int pcbVersion = -1;
+
 
 int   setupPins(){
     /*
     
-    Detect the version of the Arduino shield connected, and use the aproprate pins
+    Detect the version of the Arduino shield connected, and use the appropriate pins
+    
+    This function runs before the serial port is open so the version is not printed here
     
     */
     
-    if(pcbRevisionIndicator == 1){
+    //read the pins which indicate the PCB version
+    pcbVersion = (8*digitalRead(53) + 4*digitalRead(52) + 2*digitalRead(23) + 1*digitalRead(22)) - 1;
+    
+    if(pcbVersion == 0){
         //Beta PCB v1.0 Detected
         ENCODER1A = 18;
         ENCODER1B = 19;
@@ -121,7 +127,7 @@ int   setupPins(){
         
         return 1;
     }
-    else{
+    else if(pcbVersion == 1){
         //PCB v1.1 Detected
         #ifndef TEENSY
           ENCODER1A = 20;
@@ -162,6 +168,32 @@ int   setupPins(){
           ENB = 8;
           ENC = 30; 
         #endif
+        return 0;
+    }
+    else if(pcbVersion == 2){
+        //PCB v1.2 Detected
+        
+        //MP1 - Right Motor
+        ENCODER1A = 20;
+        ENCODER1B = 21;
+        IN1 = 4;
+        IN2 = 6;
+        ENA = 5;
+        
+        //MP2 - Z-axis
+        ENCODER2A = 19;
+        ENCODER2B = 18;
+        IN3 = 7;
+        IN4 = 9;
+        ENB = 8;
+        
+        //MP3 - Left Motor
+        ENCODER3A = 2;
+        ENCODER3B = 3;
+        IN5 = 11;
+        IN6 = 12;
+        ENC = 10;
+        
         return 0;
     }
 }

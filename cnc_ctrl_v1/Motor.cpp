@@ -25,6 +25,10 @@ to be a drop in replacement for a continuous rotation servo.
 #include "Motor.h"
 #include "TimerOne.h"
 
+#ifdef __MK64FX512__ ||  __MK66FX1M0__  // TEENSY3.5 or TEENSY3.6
+    #define TEENSY true
+#endif
+
 Motor::Motor(){
   
   _attachedState = 0;

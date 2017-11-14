@@ -101,7 +101,7 @@ void Motor::write(int speed){
         
         int pwmFrequency = round(speed);
         
-        if(_pwmPin == 12){
+        if((!TEENSY) && (_pwmPin == 12)){
             pwmFrequency = map(pwmFrequency, 0, 255, 0, 1023);  //Scales 0-255 to 0-1023
             Timer1.pwm(2, pwmFrequency);  //Special case for pin 12 due to timer blocking analogWrite()
         }
@@ -129,7 +129,7 @@ void Motor::directWrite(int voltage){
         digitalWrite(_pin2 , HIGH );
     }
     
-    if(_pwmPin == 12){
+    if((!TEENSY) && (_pwmPin == 12)){
         voltage = abs(voltage);
         voltage = map(voltage, 0, 255, 0, 1023);  //Scales 0-255 to 0-1023
         Timer1.pwm(2, voltage);  //Special case for pin 12 due to timer blocking analogWrite()

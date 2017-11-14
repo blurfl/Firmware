@@ -132,69 +132,6 @@ int   setupPins(){
     }
     else if(pcbVersion == 1){
         //PCB v1.1 Detected
-<<<<<<< HEAD
-        #ifndef TEENSY
-          ENCODER1A = 20;
-          ENCODER1B = 21;
-          ENCODER2A = 19;
-          ENCODER2B = 18;
-          ENCODER3A = 2;
-          ENCODER3B = 3;
-  
-          IN1 = 6;
-          IN2 = 4;
-          IN3 = 9;
-          IN4 = 7;
-          IN5 = 10;
-          IN6 = 11;
-  
-          ENA = 5;
-          ENB = 8;
-          ENC = 12;
-        #else // TEENSY35 or TEENSY36
-// Pin numbers re-arranged for carrier PCB layout convenience
-//  and to make ENC and IN6 capable of PWM
-          ENCODER1A = 20;
-          ENCODER1B = 21;
-          ENCODER2A = 19;
-          ENCODER2B = 18;
-          ENCODER3A = 2;
-          ENCODER3B = 3;
-  
-          IN1 = 6;
-          IN2 = 4;
-          IN3 = 7; 
-          IN4 = 9; 
-          IN5 = 10; 
-          IN6 = 29; 
-  
-          ENA = 5;
-          ENB = 8;
-          ENC = 30; 
-
-        //MP1 - Right Motor
-//        ENCODER1A = 20;
-//        ENCODER1B = 21;
-//        IN1 = 6;
-//        IN2 = 4;
-//        ENA = 5;
-//        
-//        //MP2 - Z-axis
-//        ENCODER2A = 19;
-//        ENCODER2B = 18;
-//        IN3 = 7;
-//        IN4 = 9;
-//        ENB = 8;
-//        
-//        //MP3 - Left Motor
-//        ENCODER3A = 2;
-//        ENCODER3B = 3;
-//        IN5 = 10;
-//        IN6 = 29;
-//        ENC = 30;
-          
-        #endif
-=======
         //MP1 - Right Motor
         ENCODER1A = 20; // INPUT
         ENCODER1B = 21; // INPUT
@@ -216,7 +153,6 @@ int   setupPins(){
         IN6 = 11;        // OUTPUT
         ENC = 12;        // PWM
         
->>>>>>> master
         return 0;
     }
     else if(pcbVersion == 2){

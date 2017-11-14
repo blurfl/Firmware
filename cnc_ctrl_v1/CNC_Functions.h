@@ -104,6 +104,33 @@ int   setupPins(){
     
     //read the pins which indicate the PCB version
     pcbVersion = (8*digitalRead(53) + 4*digitalRead(52) + 2*digitalRead(23) + 1*digitalRead(22)) - 1;
+
+    if (TEENSY) {
+      pcbVersion = 99;
+ 
+            //MP1 - Right Motor
+        ENCODER1A = 19; // INPUT
+        ENCODER1B = 18; // INPUT
+        IN1 = 4;        // OUTPUT
+        IN2 = 6;        // OUTPUT
+        ENA = 5;        // PWM
+        
+        //MP2 - Z-axis
+        ENCODER2A = 3;  // INPUT
+        ENCODER2B = 2;  // INPUT
+        IN3 = 7;       // OUTPUT
+        IN4 = 9;       // OUTPUT
+        ENB = 8;        // PWM
+        
+        //MP3 - Left Motor
+        ENCODER3A = 21; // INPUT
+        ENCODER3B = 20; // INPUT
+        IN5 = 29;       // OUTPUT
+        IN6 = 30;       // OUTPUT
+        ENC = 10;        // PWM
+        
+        return 1;
+}
     
     if(pcbVersion == 0){
         //Beta PCB v1.0 Detected

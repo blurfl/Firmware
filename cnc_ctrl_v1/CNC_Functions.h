@@ -15,7 +15,7 @@
 /*Right now this file is a catch all for functions which will be broken out into
 libraries*/
 
-#ifdef __MK64FX512__ ||  __MK66FX1M0__  // TEENSY3.5 or TEENSY3.6
+#if defined (__MK64FX512__) || defined(__MK66FX1M0__)  // TEENSY3.5 or TEENSY3.6
     #define TEENSY true
 #endif
     
@@ -109,15 +109,15 @@ int   setupPins(){
       pcbVersion = 99;
  
             //MP1 - Right Motor
-        ENCODER1A = 19; // INPUT
-        ENCODER1B = 18; // INPUT
+        ENCODER1A = 19;//18; // INPUT
+        ENCODER1B = 18;//19; // INPUT
         IN1 = 4;        // OUTPUT
         IN2 = 6;        // OUTPUT
         ENA = 5;        // PWM
         
         //MP2 - Z-axis
-        ENCODER2A = 3;  // INPUT
-        ENCODER2B = 2;  // INPUT
+        ENCODER2A = 2;  // INPUT
+        ENCODER2B = 3;  // INPUT
         IN3 = 7;       // OUTPUT
         IN4 = 9;       // OUTPUT
         ENB = 8;        // PWM

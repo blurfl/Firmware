@@ -25,10 +25,6 @@ to be a drop in replacement for a continuous rotation servo.
 #include "Motor.h"
 #include "TimerOne.h"
 
-#ifdef __MK64FX512__ ||  __MK66FX1M0__  // TEENSY3.5 or TEENSY3.6
-    #define TEENSY true
-#endif
-
 Motor::Motor(){
   
   _attachedState = 0;
@@ -101,7 +97,7 @@ void Motor::write(int speed){
         
         int pwmFrequency = round(speed);
         
-        if((!TEENSY) && (_pwmPin == 12)){
+        if(_pwmPin == 12){
             pwmFrequency = map(pwmFrequency, 0, 255, 0, 1023);  //Scales 0-255 to 0-1023
             Timer1.pwm(2, pwmFrequency);  //Special case for pin 12 due to timer blocking analogWrite()
         }
@@ -129,7 +125,7 @@ void Motor::directWrite(int voltage){
         digitalWrite(_pin2 , HIGH );
     }
     
-    if((!TEENSY) && (_pwmPin == 12)){
+    if(_pwmPin == 12){
         voltage = abs(voltage);
         voltage = map(voltage, 0, 255, 0, 1023);  //Scales 0-255 to 0-1023
         Timer1.pwm(2, voltage);  //Special case for pin 12 due to timer blocking analogWrite()

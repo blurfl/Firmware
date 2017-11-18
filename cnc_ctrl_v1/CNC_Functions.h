@@ -108,28 +108,28 @@ int   setupPins(){
     pcbVersion = (8*digitalRead(53) + 4*digitalRead(52) + 2*digitalRead(23) + 1*digitalRead(22)) - 1;
 
     if (TEENSY) {
-      pcbVersion = 99;
+      pcbVersion = 99; // These values reflect Maslow PCB v1.1, currently shipping
  
-            //MP1 - Right Motor
-        ENCODER1A = 19;//18; // INPUT
-        ENCODER1B = 18;//19; // INPUT
-        IN1 = 4;        // OUTPUT
-        IN2 = 6;        // OUTPUT
+        //MP1 - Right Motor
+        ENCODER1A = 20; // INPUT
+        ENCODER1B = 21; // INPUT
+        IN1 = 6;        // OUTPUT
+        IN2 = 4;        // OUTPUT
         ENA = 5;        // PWM
         
         //MP2 - Z-axis
-        ENCODER2A = 2;  // INPUT
-        ENCODER2B = 3;  // INPUT
-        IN3 = 7;       // OUTPUT
-        IN4 = 9;       // OUTPUT
+        ENCODER2A = 18; // INPUT
+        ENCODER2B = 19; // INPUT
+        IN3 = 9;        // OUTPUT
+        IN4 = 7;        // OUTPUT
         ENB = 8;        // PWM
         
         //MP3 - Left Motor
-        ENCODER3A = 21; // INPUT
-        ENCODER3B = 20; // INPUT
-        IN5 = 29;       // OUTPUT
-        IN6 = 30;       // OUTPUT
-        ENC = 10;        // PWM
+        ENCODER3A = 2;  // INPUT
+        ENCODER3B = 3;  // INPUT
+        IN5 = 10;       // OUTPUT
+        IN6 = 29;       // OUTPUT
+        ENC = 30;       // PWM
         
         return 1;
 }

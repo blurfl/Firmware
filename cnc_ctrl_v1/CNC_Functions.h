@@ -17,6 +17,8 @@ libraries*/
 
 #if defined (__MK64FX512__) || defined(__MK66FX1M0__)  // TEENSY3.5 or TEENSY3.6
     #define TEENSY true
+#else
+    #define TEENSY false
 #endif
     
 #include "Axis.h"

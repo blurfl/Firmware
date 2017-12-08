@@ -35,7 +35,6 @@
             int    attach();
             void   hold();
             void   endMove(const float& finalTarget);
-            void   stop();
             float  target();
             float  error();
             float  setpoint();
@@ -53,8 +52,6 @@
             void   setPIDValues(float Kp, float Ki, float Kd, float propWeight, float KpV, float KiV, float KdV);
             void   loadPositionFromMemory();
             String     getPIDString();
-            double     pidInput();
-            double     pidOutput();
             
         private:
             int        _PWMread(int pin);

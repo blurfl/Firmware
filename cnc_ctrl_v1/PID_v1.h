@@ -64,7 +64,6 @@ class PID
 	int GetMode();						  //  inside the PID.
 	int GetDirection();					  //
     double GetIterm();
-  String pidState();
 
   private:
 	void Initialize();

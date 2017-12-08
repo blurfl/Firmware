@@ -242,6 +242,19 @@ void   Axis::endMove(const float& finalTarget){
     
 }
 
+void   Axis::stop(){
+    /*
+
+    Immediately stop the axis where it is, not where it should be
+
+    */
+
+    _timeLastMoved = millis();
+    _axisTarget    = read()/_mmPerRotation;
+    _pidSetpoint   = read()/_mmPerRotation;
+
+}
+
 void   Axis::wipeEEPROM(){
     /*
     
@@ -313,3 +326,6 @@ void   Axis::test(){
     motorGearboxEncoder.motor.directWrite(0);
     Serial.print(F("<Idle,MPos:0,0,0,WPos:0.000,0.000,0.000>"));
 }
+
+double  Axis::pidInput(){ return _pidInput*_mmPerRotation;}
+double  Axis::pidOutput(){ return _pidOutput;}

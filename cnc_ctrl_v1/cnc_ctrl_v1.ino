@@ -32,7 +32,7 @@ void setup(){
     Timer1.attachInterrupt(runsOnATimer);
     
     Serial.println(F("Grbl v1.00"));
-
+    
 }
 
 void runsOnATimer(){

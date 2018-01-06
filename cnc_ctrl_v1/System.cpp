@@ -77,7 +77,7 @@ void   setupAxes(){
     int ENC;
 
     if (TEENSY == true) {
-      int pcbVersion = pcbVersion = 999;
+      int pcbVersion = pcbVersion = 5;
       //MP1 - Right Motor
       ENCODER1A = 20; // INPUT
       ENCODER1B = 21; // INPUT

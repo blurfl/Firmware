@@ -35,7 +35,11 @@ Kinematics kinematics;
 void setup(){
     Serial.begin(57600);
     Serial.print(F("PCB v1."));
-    Serial.print(getPCBVersion());
+    if (TEENSY == true) {
+      Serial.print(F("xx Teensy"));
+    } else {
+      Serial.print(getPCBVersion());
+    }
     Serial.println(F(" Detected"));
     sys.inchesToMMConversion = 1;
     setupAxes();

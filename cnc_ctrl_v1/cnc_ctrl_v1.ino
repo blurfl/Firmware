@@ -91,7 +91,5 @@ void loop(){
         gcodeExecuteLoop();
         
         execSystemRealtime();
-    
-        _watchDog();
     }
 }

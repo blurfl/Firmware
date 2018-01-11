@@ -34,9 +34,12 @@ Kinematics kinematics;
 
 void setup(){
     Serial.begin(57600);
+    if (TEENSY == true) {
+      delay(2000);
+    }
     Serial.print(F("PCB v1."));
     if (TEENSY == true) {
-      Serial.print(F("xx Teensy"));
+      Serial.print(F("1 Teensy"));
     } else {
       Serial.print(getPCBVersion());
     }

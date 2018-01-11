@@ -77,7 +77,7 @@ void   setupAxes(){
     int ENC;
 
     if (TEENSY == true) {
-      int pcbVersion = 99;
+      int pcbVersion = 1; // lie about this...
       //MP1 - Right Motor
       ENCODER1A = 20; // INPUT
       ENCODER1B = 21; // INPUT
@@ -179,7 +179,11 @@ void   setupAxes(){
   }
 
 int getPCBVersion(){
+    if (TEENSY == true) {
+      int pcbVersion = 1; // lie about this...
+    } else {
     return (8*digitalRead(53) + 4*digitalRead(52) + 2*digitalRead(23) + 1*digitalRead(22)) - 1;
+    }
 }
 
 

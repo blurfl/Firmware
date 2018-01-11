@@ -319,6 +319,12 @@ byte systemExecuteCmdstring(String& cmdString){
           case '$': case 'K':// case 'G': case 'C': case 'X':
             if ( cmdString.length() > 2 ) { return(STATUS_INVALID_STATEMENT); }
             switch( cmdString[char_counter] ) {
+              case '@' : // Restarts Maslow software on Teensy
+                if (TEENSY == true) {
+                  CPU_RESTART; // restart the firmware without resetting the USB connection, 
+                               // reboot_Teensyduino_() resets the USB connection; 
+                }
+                break;
               case '$' : // Prints Maslow settings
                 // if ( sys.state & (STATE_CYCLE | STATE_HOLD) ) { return(STATUS_IDLE_ERROR); } // Block during cycle. Takes too long to print.
                 // else {

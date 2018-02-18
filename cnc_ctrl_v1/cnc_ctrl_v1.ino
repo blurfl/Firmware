@@ -33,7 +33,8 @@ Axis zAxis;
 Kinematics kinematics;
 
 void setup(){
-    Serial.begin(57600);
+    Serial.begin(57601); //or try 58824
+    // see https://www.pjrc.com/teensy/td_uart.html near the bottom of that page
     if (TEENSY == true) {
       delay(2000);
     }

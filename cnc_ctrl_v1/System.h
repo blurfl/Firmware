@@ -83,6 +83,9 @@ void maslowDelay(unsigned long);
 void  _watchDog();
 void execSystemRealtime();
 void systemSaveAxesPosition();
+void systemReset();
 byte systemExecuteCmdstring(String&);
+void setPWMPrescalers(int prescalerChoice);
+
 
 #endif

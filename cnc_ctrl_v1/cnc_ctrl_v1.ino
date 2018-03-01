@@ -46,22 +46,25 @@ void setup(){
     }
     Serial.println(F(" Detected"));
     sys.inchesToMMConversion = 1;
+    settingsLoadFromEEprom();
     setupAxes();
-    settingsInit();
-    // TODO This seems wrong, if the encoder steps are changed, axis position
-    // will be in the wrong place.  Would be better if we stored positions as
-    // steps 
+    settingsLoadStepsFromEEprom();
     // Set initial desired position of the machine to its current position
     leftAxis.write(leftAxis.read());
-    rightAxis.write(leftAxis.read());
-    zAxis.write(leftAxis.read());
+    rightAxis.write(rightAxis.read());
+    zAxis.write(zAxis.read());
     readyCommandString.reserve(INCBUFFERLENGTH);           //Allocate memory so that this string doesn't fragment the heap as it grows and shrinks
     gcodeLine.reserve(INCBUFFERLENGTH);
+
+    #ifndef SIMAVR // Using the timer will crash simavr, so we disable it.
+                   // Instead, we'll run runsOnATimer periodically in loop().
     Timer1.initialize(LOOPINTERVAL);
     Timer1.attachInterrupt(runsOnATimer);
+    #endif
     
     Serial.println(F("Grbl v1.00"));  // Why GRBL?  Apparenlty because some programs are silly and look for this as an initailization command
     Serial.println(F("ready"));
+    reportStatusMessage(STATUS_OK);
 }
 
 void runsOnATimer(){
@@ -87,13 +90,14 @@ void loop(){
     kinematics.init();
     
     // Let's go!
-    reportStatusMessage(STATUS_OK);
     sys.stop = false;            // We should consider an abort option which
                                  // is not reset automatically such as a software
                                  // limit
     while (!sys.stop){
         gcodeExecuteLoop();
-        
+        #ifdef SIMAVR // Normally, runsOnATimer() will, well, run on a timer. See also setup().
+        runsOnATimer();
+        #endif
         execSystemRealtime();
     }
 }

@@ -83,42 +83,36 @@ void Motor::write(int speed){
     Sets motor speed from input. Speed = 0 is stopped, -255 is full reverse, 255 is full ahead.
     */
     if (_attachedState == 1){
-        
-        //linearize the motor
-        //speed = _convolve(speed);
-        
-        //set direction range is 0-180
-        if (speed > 0){
-            digitalWrite(_pin1 , HIGH);
-            digitalWrite(_pin2 , LOW );
-            speed = speed;
-        }
-        else if (speed == 0){
-            speed = speed;
-        }
-        else{
-            digitalWrite(_pin1 , LOW);
-            digitalWrite(_pin2 , HIGH );
-            speed = speed;
-        }
-        
-        //enforce range
         speed = constrain(speed, -255, 255);
-        
         _lastSpeed = speed; //saves speed for use in additive write
+        bool forward = (speed > 0);
+        speed = abs(speed); //remove sign from input because direction is set by control pins on H-bridge   
         
-        speed = abs(speed); //remove sign from input because direction is set by control pins on H-bridge
-        
-        int pwmFrequency = round(speed);
-        
-        if(_pwmPin == 12){
-            pwmFrequency = map(pwmFrequency, 0, 255, 0, 1023);  //Scales 0-255 to 0-1023
-            Timer1.pwm(2, pwmFrequency);  //Special case for pin 12 due to timer blocking analogWrite()
-        }
-        else{
-            analogWrite(_pwmPin, pwmFrequency);
-        }
-        
+        bool usePin1 = ((_pin1 != 4) && (_pin1 != 13) && (_pin1 != 11) && (_pin1 != 12)); // avoid PWM using timer0 or timer1
+        bool usePin2 = ((_pin2 != 4) && (_pin2 != 13) && (_pin2 != 11) && (_pin2 != 12)); // avoid PWM using timer0 or timer1
+        if (forward) {
+            if (speed > 0) {
+              if (usePin2) {
+                digitalWrite(_pin1 , HIGH );
+                analogWrite(_pin2 , 255 - speed); // invert drive signals - don't alter speed
+              } else {
+                analogWrite(_pin1 , speed);
+                digitalWrite(_pin2 , LOW );
+              }
+            } else {
+              digitalWrite(_pin1 , LOW );
+              digitalWrite(_pin2 , LOW );
+            }
+        } else{
+            if (usePin1) {
+              analogWrite(_pin1 , 255 - speed); // invert drive signals - don't alter speed
+              digitalWrite(_pin2 , HIGH );
+            } else {
+                analogWrite(_pin2 , speed);
+                digitalWrite(_pin1 , LOW );
+            }
+        }  
+        digitalWrite(_pwmPin, HIGH);
     }
 }
 
@@ -126,27 +120,21 @@ void Motor::directWrite(int voltage){
     /*
     Write directly to the motor, ignoring if the axis is attached or any applied calibration.
     */
-    
-    if (voltage > 0){
-        digitalWrite(_pin1 , HIGH);
-        digitalWrite(_pin2 , LOW );
-    }
-    else if (voltage == 0){
-        voltage = voltage;
+    bool forward = (voltage >= 0);
+    if (forward) {
+        if (voltage > 0) {
+          digitalWrite(_pin1 , HIGH );
+          analogWrite(_pin2 , 255 - abs(voltage)); // invert drive signals - don't alter speed
+        } else {
+          digitalWrite(_pin1 , LOW );
+          digitalWrite(_pin2 , LOW );
+        }
     }
     else{
-        digitalWrite(_pin1 , LOW);
+        analogWrite(_pin1 , 255 - abs(voltage)); // invert drive signals - don't alter speed
         digitalWrite(_pin2 , HIGH );
     }
-    
-    if(_pwmPin == 12){
-        voltage = abs(voltage);
-        voltage = map(voltage, 0, 255, 0, 1023);  //Scales 0-255 to 0-1023
-        Timer1.pwm(2, voltage);  //Special case for pin 12 due to timer blocking analogWrite()
-    }
-    else{
-        analogWrite(_pwmPin, abs(voltage));
-    }
+    digitalWrite(_pwmPin, HIGH);
 }
 
 int  Motor::attached(){

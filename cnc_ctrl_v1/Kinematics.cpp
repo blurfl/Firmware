@@ -30,7 +30,7 @@ Kinematics::Kinematics(){
 void Kinematics::init(){
     recomputeGeometry();
     if (sys.state != STATE_OLD_SETTINGS){
-      forward(leftAxis.read(), rightAxis.read(), &sys.xPosition, &sys.yPosition);
+      forward(leftAxis.read(), rightAxis.read(), &sys.xPosition, &sys.yPosition, sys.xPosition, sys.yPosition);
     }
 }
 
@@ -48,6 +48,7 @@ void Kinematics::recomputeGeometry(){
     calling this function regenerates those values.  These are all floats so they take up
     ~32bytes of RAM to keep them in memory.
     */
+    Phi = -0.2;
     h = sqrt((sysSettings.sledWidth/2)*(sysSettings.sledWidth/2) + sysSettings.sledHeight * sysSettings.sledHeight);
     Theta = atan(2*sysSettings.sledHeight/sysSettings.sledWidth);
     Psi1 = Theta - Phi;
@@ -199,15 +200,45 @@ void  Kinematics::triangularInverse(float xTarget,float yTarget, float* aChainLe
     
     //Confirm that the coordinates are on the wood
     _verifyValidTarget(&xTarget, &yTarget);
-    
+
+    //Set up variables
+    float Chain1Angle = 0;
+    float Chain2Angle = 0;
+    float Chain1AroundSprocket = 0;
+    float Chain2AroundSprocket = 0;
+
     //Calculate motor axes length to the bit
     float Motor1Distance = sqrt(pow((-1*_xCordOfMotor - xTarget),2)+pow((_yCordOfMotor - yTarget),2));
     float Motor2Distance = sqrt(pow((_xCordOfMotor - xTarget),2)+pow((_yCordOfMotor - yTarget),2));
-    
-    //Calculate chain lengths accounting for sprocket geometry
-    float Chain1 = (R * (3.14159 - acos(R/Motor1Distance) - acos((_yCordOfMotor - yTarget)/Motor1Distance))) + sqrt(pow(Motor1Distance,2)-pow(R,2));
-    float Chain2 = (R * (3.14159 - acos(R/Motor2Distance) - acos((_yCordOfMotor - yTarget)/Motor2Distance))) + sqrt(pow(Motor2Distance,2)-pow(R,2));
-    
+
+    //Calculate the chain angles from horizontal, based on if the chain connects to the sled from the top or bottom of the sprocket
+    if(sysSettings.chainOverSprocket == 1){
+        Chain1Angle = asin((_yCordOfMotor - yTarget)/Motor1Distance) + asin(R/Motor1Distance);
+        Chain2Angle = asin((_yCordOfMotor - yTarget)/Motor2Distance) + asin(R/Motor2Distance);
+
+        Chain1AroundSprocket = R * Chain1Angle;
+        Chain2AroundSprocket = R * Chain2Angle;
+    }
+    else{
+        Chain1Angle = asin((_yCordOfMotor - yTarget)/Motor1Distance) - asin(R/Motor1Distance);
+        Chain2Angle = asin((_yCordOfMotor - yTarget)/Motor2Distance) - asin(R/Motor2Distance);
+
+        Chain1AroundSprocket = R * (3.14159 - Chain1Angle);
+        Chain2AroundSprocket = R * (3.14159 - Chain2Angle);
+    }
+
+    //Calculate the straight chain length from the sprocket to the bit
+    float Chain1Straight = sqrt(pow(Motor1Distance,2)-pow(R,2));
+    float Chain2Straight = sqrt(pow(Motor2Distance,2)-pow(R,2));
+
+    //Correct the straight chain lengths to account for chain sag
+    Chain1Straight *= (1 + ((sysSettings.chainSagCorrection / 1000000000000) * pow(cos(Chain1Angle),2) * pow(Chain1Straight,2) * pow((tan(Chain2Angle) * cos(Chain1Angle)) + sin(Chain1Angle),2)));
+    Chain2Straight *= (1 + ((sysSettings.chainSagCorrection / 1000000000000) * pow(cos(Chain2Angle),2) * pow(Chain2Straight,2) * pow((tan(Chain1Angle) * cos(Chain2Angle)) + sin(Chain2Angle),2)));
+
+    //Calculate total chain lengths accounting for sprocket geometry and chain sag
+    float Chain1 = Chain1AroundSprocket + Chain1Straight;
+    float Chain2 = Chain2AroundSprocket + Chain2Straight;
+
     //Subtract of the virtual length which is added to the chain by the rotation mechanism
     Chain1 = Chain1 - sysSettings.rotationDiskRadius;
     Chain2 = Chain2 - sysSettings.rotationDiskRadius;
@@ -216,12 +247,10 @@ void  Kinematics::triangularInverse(float xTarget,float yTarget, float* aChainLe
     *bChainLength = Chain2;
 }
 
-void  Kinematics::forward(const float& chainALength, const float& chainBLength, float* xPos, float* yPos){
+void  Kinematics::forward(const float& chainALength, const float& chainBLength, float* xPos, float* yPos, float xGuess, float yGuess){
   
     Serial.println(F("[Forward Calculating Position]"));
     
-    float xGuess = 0;
-    float yGuess = 0;
 
     float guessLengthA;
     float guessLengthB;
@@ -258,8 +287,8 @@ void  Kinematics::forward(const float& chainALength, const float& chainBLength, 
         // No need for sys.stop check here
 
         //if we've converged on the point...or it's time to give up, exit the loop
-        if((abs(aChainError) < .1 && abs(bChainError) < .1) or guessCount > KINEMATICSMAXGUESS){
-            if(guessCount > KINEMATICSMAXGUESS){
+        if((abs(aChainError) < .1 && abs(bChainError) < .1) or guessCount > KINEMATICSMAXGUESS or guessLengthA > sysSettings.chainLength  or guessLengthB > sysSettings.chainLength){
+            if((guessCount > KINEMATICSMAXGUESS) or guessLengthA > sysSettings.chainLength or guessLengthB > sysSettings.chainLength){
                 Serial.print(F("Message: Unable to find valid machine position for chain lengths "));
                 Serial.print(chainALength);
                 Serial.print(", ");

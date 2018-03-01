@@ -27,7 +27,7 @@
 #endif
 
 // Maslow Firmware Version tracking
-#define VERSIONNUMBER 1.03
+#define VERSIONNUMBER 1.08
 
 // Define standard libraries used by maslow.
 #include <avr/io.h>
@@ -57,5 +57,6 @@
 #include "Settings.h"
 #include "NutsAndBolts.h"
 #include "System.h"
+#include "SimavrSerial.h"
 
 #endif

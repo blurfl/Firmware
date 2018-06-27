@@ -11,7 +11,28 @@
     along with the Maslow Control Software.  If not, see <http://www.gnu.org/licenses/>.
     
     Copyright 2014-2017 Bar Smith*/
+	
+	
+/* To the projects contributers:
+ *
+ * it is highly recommended to activate warning output of the arduino gcc compiler.
+ * Compiler warnings are a great help to keep the codebase clean and can give clues
+ * to potentally wrong code. Also, if a codebase produces too many warnings it gets 
+ * more likely that possibly important warnings could be overlooked. 
+ *
+ * Since the Arduino IDE suppresses any compiler output by default we have to activate it.
+ *
+ * Therefore Arduino IDE users need to activate compiler output in the 
+ * preferences dialog. Additionally Arduino IDE needs to tell the compiler to generate
+ * warning  messages. This is done in the Arduino IDE's preferences.txt file - you can 
+ * get there via the Preferences Dialog - there is a link to the file at the bottom. 
+ * Edit the line "compiler.warning_level=none" to "compiler.warning_level=all"
+ * and restart the IDE.
+ */
     
+
+// TLE5206 version
+
 #include "Maslow.h"
 
 // Define system global state structure
@@ -39,11 +60,11 @@ void setup(){
       delay(2000);
     }
     Serial.print(F("PCB v1."));
+    Serial.print(getPCBVersion());
     if (TEENSY == true) {
-      Serial.print(F("1 Teensy"));
-    } else {
-      Serial.print(getPCBVersion());
+      Serial.print(F(" Teensy"));
     }
+    if (TLE5206 == true) { Serial.print(F(" TLE5206 ")); }
     Serial.println(F(" Detected"));
     sys.inchesToMMConversion = 1;
     settingsLoadFromEEprom();
@@ -62,9 +83,10 @@ void setup(){
     Timer1.attachInterrupt(runsOnATimer);
     #endif
     
-    Serial.println(F("Grbl v1.00"));  // Why GRBL?  Apparenlty because some programs are silly and look for this as an initailization command
+    Serial.println(F("Grbl v1.00"));  // Why GRBL?  Apparently because some programs are silly and look for this as an initialization command
     Serial.println(F("ready"));
     reportStatusMessage(STATUS_OK);
+
 }
 
 void runsOnATimer(){

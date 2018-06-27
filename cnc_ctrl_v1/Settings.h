@@ -32,6 +32,12 @@ Copyright 2014-2017 Bar Smith*/
 #define SETTINGS_RESTORE_MASLOW bit(1)
 #define SETTINGS_RESTORE_ALL bit(2)
 
+enum SpindleAutomationType {
+  NONE,
+  SERVO,
+  RELAY_ACTIVE_HIGH,
+  RELAY_ACTIVE_LOW };
+
 typedef struct {  // I think this is about ~128 bytes in size if I counted correctly
   float machineWidth;
   float machineHeight;
@@ -49,7 +55,7 @@ typedef struct {  // I think this is about ~128 bytes in size if I counted corre
   float distPerRot;
   unsigned int maxFeed;
   bool zAxisAttached;
-  bool spindleAutomate;
+  SpindleAutomationType spindleAutomateType;
   float maxZRPM;
   float zDistPerRot;
   float zEncoderSteps;
@@ -72,6 +78,9 @@ typedef struct {  // I think this is about ~128 bytes in size if I counted corre
   float chainSagCorrection;
   byte chainOverSprocket;
   byte fPWM;
+  float distPerRotLeftChainTolerance;
+  float distPerRotRightChainTolerance;
+  float positionErrorLimit;
   byte eepromValidData;  // This should always be last, that way if an error
                          // happens in writing, it will not be written and we
 } settings_t;            // will know to reset the settings

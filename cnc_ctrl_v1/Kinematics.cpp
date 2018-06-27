@@ -114,7 +114,7 @@ void  Kinematics::quadrilateralInverse(float xTarget,float yTarget, float* aChai
                                              //These criteria will be zero when the correct values are reached
                                              //They are negated here as a numerical efficiency expedient
 
-        Crit[0]=  - _moment(Y1Plus, Y2Plus, Phi, MySinPhi, SinPsi1, CosPsi1, SinPsi2, CosPsi2);
+        Crit[0]=  - _moment(Y1Plus, Y2Plus, MySinPhi, SinPsi1, CosPsi1, SinPsi2, CosPsi2);
         Crit[1] = - _YOffsetEqn(Y1Plus, x - h * CosPsi1, SinPsi1);
         Crit[2] = - _YOffsetEqn(Y2Plus, sysSettings.distBetweenMotors - (x + h * CosPsi2), SinPsi2);
 
@@ -131,9 +131,9 @@ void  Kinematics::quadrilateralInverse(float xTarget,float yTarget, float* aChai
 
                           //Estimate the Jacobian components
 
-        Jac[0] = (_moment( Y1Plus, Y2Plus,Phi + DELTAPHI, MySinPhiDelta, SinPsi1D, CosPsi1D, SinPsi2D, CosPsi2D) + Crit[0])/DELTAPHI;
-        Jac[1] = (_moment( Y1Plus + DELTAY, Y2Plus, Phi, MySinPhi, SinPsi1, CosPsi1, SinPsi2, CosPsi2) + Crit[0])/DELTAY;
-        Jac[2] = (_moment(Y1Plus, Y2Plus + DELTAY,  Phi, MySinPhi, SinPsi1, CosPsi1, SinPsi2, CosPsi2) + Crit[0])/DELTAY;
+        Jac[0] = (_moment( Y1Plus, Y2Plus, MySinPhiDelta, SinPsi1D, CosPsi1D, SinPsi2D, CosPsi2D) + Crit[0])/DELTAPHI;
+        Jac[1] = (_moment( Y1Plus + DELTAY, Y2Plus, MySinPhi, SinPsi1, CosPsi1, SinPsi2, CosPsi2) + Crit[0])/DELTAY;
+        Jac[2] = (_moment(Y1Plus, Y2Plus + DELTAY, MySinPhi, SinPsi1, CosPsi1, SinPsi2, CosPsi2) + Crit[0])/DELTAY;
         Jac[3] = (_YOffsetEqn(Y1Plus, x - h * CosPsi1D, SinPsi1D) + Crit[1])/DELTAPHI;
         Jac[4] = (_YOffsetEqn(Y1Plus + DELTAY, x - h * CosPsi1,SinPsi1) + Crit[1])/DELTAY;
         Jac[5] = 0.0;
@@ -213,23 +213,23 @@ void  Kinematics::triangularInverse(float xTarget,float yTarget, float* aChainLe
 
     //Calculate the chain angles from horizontal, based on if the chain connects to the sled from the top or bottom of the sprocket
     if(sysSettings.chainOverSprocket == 1){
-        Chain1Angle = asin((_yCordOfMotor - yTarget)/Motor1Distance) + asin(R/Motor1Distance);
-        Chain2Angle = asin((_yCordOfMotor - yTarget)/Motor2Distance) + asin(R/Motor2Distance);
+        Chain1Angle = asin((_yCordOfMotor - yTarget)/Motor1Distance) + asin(RleftChainTolerance/Motor1Distance);
+        Chain2Angle = asin((_yCordOfMotor - yTarget)/Motor2Distance) + asin(RrightChainTolerance/Motor2Distance);
 
-        Chain1AroundSprocket = R * Chain1Angle;
-        Chain2AroundSprocket = R * Chain2Angle;
+        Chain1AroundSprocket = RleftChainTolerance * Chain1Angle;
+        Chain2AroundSprocket = RrightChainTolerance * Chain2Angle;
     }
     else{
-        Chain1Angle = asin((_yCordOfMotor - yTarget)/Motor1Distance) - asin(R/Motor1Distance);
-        Chain2Angle = asin((_yCordOfMotor - yTarget)/Motor2Distance) - asin(R/Motor2Distance);
+        Chain1Angle = asin((_yCordOfMotor - yTarget)/Motor1Distance) - asin(RleftChainTolerance/Motor1Distance);
+        Chain2Angle = asin((_yCordOfMotor - yTarget)/Motor2Distance) - asin(RrightChainTolerance/Motor2Distance);
 
-        Chain1AroundSprocket = R * (3.14159 - Chain1Angle);
-        Chain2AroundSprocket = R * (3.14159 - Chain2Angle);
+        Chain1AroundSprocket = RleftChainTolerance * (3.14159 - Chain1Angle);
+        Chain2AroundSprocket = RrightChainTolerance * (3.14159 - Chain2Angle);
     }
 
     //Calculate the straight chain length from the sprocket to the bit
-    float Chain1Straight = sqrt(pow(Motor1Distance,2)-pow(R,2));
-    float Chain2Straight = sqrt(pow(Motor2Distance,2)-pow(R,2));
+    float Chain1Straight = sqrt(pow(Motor1Distance,2)-pow(RleftChainTolerance,2));
+    float Chain2Straight = sqrt(pow(Motor2Distance,2)-pow(RrightChainTolerance,2));
 
     //Correct the straight chain lengths to account for chain sag
     Chain1Straight *= (1 + ((sysSettings.chainSagCorrection / 1000000000000) * pow(cos(Chain1Angle),2) * pow(Chain1Straight,2) * pow((tan(Chain2Angle) * cos(Chain1Angle)) + sin(Chain1Angle),2)));
@@ -293,7 +293,7 @@ void  Kinematics::forward(const float& chainALength, const float& chainBLength, 
                 Serial.print(chainALength);
                 Serial.print(", ");
                 Serial.print(chainBLength);
-                Serial.println(F(" . Please calibrate chain lengths."));
+                Serial.println(F(" . Please set the chains to a known length (Actions -> Set Chain Lengths)"));
                 *xPos = 0;
                 *yPos = 0;
             }
@@ -358,7 +358,7 @@ void  Kinematics::_MatSolv(){
     }
 }
 
-float Kinematics::_moment(const float& Y1Plus, const float& Y2Plus, const float& Phi, const float& MSinPhi, const float& MSinPsi1, const float& MCosPsi1, const float& MSinPsi2, const float& MCosPsi2){   //computes net moment about center of mass
+float Kinematics::_moment(const float& Y1Plus, const float& Y2Plus, const float& MSinPhi, const float& MSinPsi1, const float& MCosPsi1, const float& MSinPsi2, const float& MCosPsi2){   //computes net moment about center of mass
     float Offsetx1;
     float Offsetx2;
     float Offsety1;

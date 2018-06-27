@@ -9,10 +9,10 @@
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
     along with the Maslow Control Software.  If not, see <http://www.gnu.org/licenses/>.
-    
+
     Copyright 2014-2017 Bar Smith*/
 
-// This file contains precompile configuration settings that apply to the 
+// This file contains precompile configuration settings that apply to the
 // whole system
 
 #ifndef config_h
@@ -20,7 +20,7 @@
 
 // Debugging Options
 #define verboseDebug 0     // set to 0 for no debug messages, 1 for single-line messages, 2 to also output ring buffer contents
-#define misloopDebug 0     // set to 1 for a warning every time the movement loop fails 
+#define misloopDebug 0     // set to 1 for a warning every time the movement loop fails
                            // to complete before being interrupted, helpful for loop
                            // LOOPINTERVAL tuning
 #define KINEMATICSDBG 0    // set to 1 for additional kinematics debug messaging
@@ -35,24 +35,14 @@
 
 #define LOOPINTERVAL 10000 // What is the frequency of the PID loop in microseconds
 
-// Define extra pins
-#if(TEENSY == true)
-// AUX pin numbers re-arranged for carrier PCB layout convenience
-  #define AUX1 14
-  #define AUX2 15
-  #define AUX3 16
-  #define AUX4 17
-  #define AUX5 11
-  #define AUX6 12
-#else
-  #define AUX1 17
-  #define AUX2 16
-  #define AUX3 15
-  #define AUX4 14
-#endif
+// Define version detect pins
+#define VERS1 22
+#define VERS2 23
+#define VERS3 24
+#define VERS4 25
+#define VERS5 26
+#define VERS6 27
 
-#define SpindlePowerControlPin AUX1 // output for controlling spindle power
-#define ProbePin AUX4 // use this input for zeroing zAxis with G38.2 gcode
 
 // Serial variables
 #define INCBUFFERLENGTH 128 // The number of bytes(characters) allocated to the

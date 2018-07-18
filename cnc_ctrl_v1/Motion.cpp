@@ -118,7 +118,7 @@ int   coordinatedMove(const float& xEnd, const float& yEnd, const float& zEnd, f
     
     float aChainLength;
     float bChainLength;
-    float zPosition                   = zStartingLocation;
+    // float zPosition                   = zStartingLocation;
     long   numberOfStepsTaken         =  0;
     
     while(numberOfStepsTaken < finalNumberOfSteps){
@@ -132,7 +132,8 @@ int   coordinatedMove(const float& xEnd, const float& yEnd, const float& zEnd, f
             // This section ~20us
             sys.xPosition +=  xStepSize;
             sys.yPosition +=  yStepSize;
-            zPosition += zStepSize;
+            sys.zPosition +=  zStepSize;
+            // zPosition += zStepSize;
             
             //find the chain lengths for this step
             // This section ~180us
@@ -143,7 +144,8 @@ int   coordinatedMove(const float& xEnd, const float& yEnd, const float& zEnd, f
             leftAxis.write(aChainLength);
             rightAxis.write(bChainLength);
             if(sysSettings.zAxisAttached){
-              zAxis.write(zPosition);
+              zAxis.write(sys.zPosition);
+              // zAxis.write(zPosition);
             }
             
             movementUpdate();
@@ -164,7 +166,8 @@ int   coordinatedMove(const float& xEnd, const float& yEnd, const float& zEnd, f
     leftAxis.endMove(aChainLength);
     rightAxis.endMove(bChainLength);
     if(sysSettings.zAxisAttached){
-      zAxis.endMove(zPosition);
+      zAxis.endMove(sys.zPosition);
+      // zAxis.endMove(zPosition);
     }
     
     sys.xPosition = xEnd;
@@ -229,7 +232,7 @@ void  singleAxisMove(Axis* axis, const float& endPos, const float& MMPerMin){
 int sign(double x) { return x<0 ? -1 : 1; }
 
 // why does this return anything
-int   arc(const float& X1, const float& Y1, const float& X2, const float& Y2, const float& centerX, const float& centerY, const float& MMPerMin, const float& direction){
+int   arc(const float& X1, const float& Y1, const float& Z1, const float& X2, const float& Y2, const float& Z2, const float& centerX, const float& centerY, const float& MMPerMin, const float& direction){
     /*
     
     Move the machine through an arc from point (X1, Y1) to point (X2, Y2) along the 

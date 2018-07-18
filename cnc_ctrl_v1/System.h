@@ -56,6 +56,7 @@ typedef struct {
   byte pause;                 // Pause flag.
   float xPosition;            // Cartessian position of XY axes
   float yPosition;            // Cached because calculating position is intensive
+  float zPosition;            // Cached because calculating position is intensive
   float steps[3];             // Encoder position of axes
   bool  useRelativeUnits;     //
   unsigned long lastSerialRcvd; // The millis of the last rcvd serial command, used by watchdo

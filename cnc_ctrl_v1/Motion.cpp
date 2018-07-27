@@ -80,7 +80,8 @@ int   coordinatedMove(const float& xEnd, const float& yEnd, const float& zEnd, f
     
     float  xStartingLocation = sys.xPosition;
     float  yStartingLocation = sys.yPosition;
-    float  zStartingLocation = zAxis.read();  // I don't know why we treat the zaxis differently
+    float  zStartingLocation = sys.yPosition;  
+    //float  zStartingLocation = zAxis.read();  // I don't know why we treat the zaxis differently
     float  zMaxFeed          = sysSettings.maxZRPM * abs(zAxis.getPitch());
     
     //find the total distances to move
@@ -237,6 +238,7 @@ int   arc(const float& X1, const float& Y1, const float& Z1, const float& X2, co
     
     Move the machine through an arc from point (X1, Y1) to point (X2, Y2) along the 
     arc defined by center (centerX, centerY) at speed MMPerMin
+    If Z movement is called for, throttle back federate if it exceeds zaxis max 
     
     */
     
@@ -278,16 +280,37 @@ int   arc(const float& X1, const float& Y1, const float& Z1, const float& X2, co
       return 1;
     }
 
-    float arcLengthMM            =  circumference * (theta / (2*pi) );
+    float arcLengthMM             =  circumference * (theta / (2*pi) );
+
+    float  zDistanceToMoveInMM        = Z2 - Z1;
+
     
     //set up variables for movement
     long numberOfStepsTaken       =  0;
     
-    float stepSizeMM             =  computeStepSize(MMPerMin);
+    float stepSizeMM              =  computeStepSize(MMPerMin); // this is only XY movement
+    
+    float MMPerMinLocal           = MMPerMin; // local copy, changed if Z movement called
+    
 
     //the argument to abs should only be a variable -- splitting calc into 2 lines
     long   finalNumberOfSteps     =  arcLengthMM/stepSizeMM;
     //finalNumberOfSteps = abs(finalNumberOfSteps);
+
+    float  delayTime              = LOOPINTERVAL;
+    float  zFeedrate              = calculateFeedrate(abs(zDistanceToMoveInMM/finalNumberOfSteps), delayTime); //zFeedrate is 0 if no Z movement
+    float  zStepSizeMM;
+    
+    //throttle back federate if it exceeds zaxis max
+    float  zMaxFeed               = sysSettings.maxZRPM * abs(zAxis.getPitch());
+    if (zFeedrate > zMaxFeed){
+      zStepSizeMM                 = computeStepSize(zMaxFeed);
+      // float  zStepSizeMM          = computeStepSize(zMaxFeed);
+      finalNumberOfSteps          = abs(zDistanceToMoveInMM/zStepSizeMM);
+      stepSizeMM                  = (zDistanceToMoveInMM/finalNumberOfSteps);
+      MMPerMinLocal               = calculateFeedrate(stepSizeMM, delayTime);
+    }
+    
     
     //Compute the starting position
     float angleNow = startingAngle;
@@ -314,11 +337,16 @@ int   arc(const float& X1, const float& Y1, const float& Z1, const float& X2, co
             
             sys.xPosition = radius * cos(angleNow) + centerX;
             sys.yPosition = radius * sin(angleNow) + centerY;
+            sys.zPosition +=  zStepSizeMM;
             
             kinematics.inverse(sys.xPosition,sys.yPosition,&aChainLength,&bChainLength);
             
             leftAxis.write(aChainLength);
             rightAxis.write(bChainLength); 
+            if(sysSettings.zAxisAttached){
+              zAxis.write(sys.zPosition);
+              // zAxis.write(zPosition);
+            }
             movementUpdate();
             
             // Run realtime commands
@@ -335,9 +363,14 @@ int   arc(const float& X1, const float& Y1, const float& Z1, const float& X2, co
     kinematics.inverse(X2,Y2,&aChainLength,&bChainLength);
     leftAxis.endMove(aChainLength);
     rightAxis.endMove(bChainLength);
+    if(sysSettings.zAxisAttached){
+      zAxis.endMove(sys.zPosition);
+      // zAxis.endMove(zPosition);
+    }
     
     sys.xPosition = X2;
     sys.yPosition = Y2;
+    sys.zPosition = Z2;
     
     return 1;
 }

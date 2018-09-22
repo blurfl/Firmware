@@ -39,6 +39,19 @@ void settingsLoadFromEEprom(){
         settingsVersionStruct.eepromValidData == EEPROMVALIDDATA &&
         tempSettings.eepromValidData == EEPROMVALIDDATA){
           sysSettings = tempSettings;
+          size_t thisBig = 0;
+          Serial.print(F("sysSettings ends at "));
+          Serial.println((sizeof(sysSettings) * sizeof(thisBig)) + 340);
+          Serial.print(F("sysSettings size is "));
+          Serial.println(sizeof(sysSettings));
+          Serial.print(F("tempSettings size is "));
+          Serial.println(sizeof(tempSettings));
+          Serial.print(F("size_t size is "));
+          Serial.println(sizeof(thisBig));
+          Serial.print(F("sysSettings is "));
+          Serial.print(sizeof(sysSettings) * sizeof(thisBig));
+          Serial.println(F(" bytes"));
+
     }
     else {
       reportStatusMessage(STATUS_SETTING_READ_FAIL);

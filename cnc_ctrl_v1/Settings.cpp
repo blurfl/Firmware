@@ -21,8 +21,11 @@ Copyright 2014-2017 Bar Smith*/
 // previously by pre v1.00 Firmware.
 
 #include "Maslow.h"
-#include <EEPROM.h>
-
+#if defined(ARDUINO_SAM_DUE) // Arduino Due
+  #include "DueFlashStorage.h"
+#else
+  #include <EEPROM.h>
+#endif
 void settingsLoadFromEEprom(){
     /*
     Loads data from EEPROM if EEPROM data is valid, only called on startup

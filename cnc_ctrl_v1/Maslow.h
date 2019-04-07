@@ -21,7 +21,9 @@
 #define VERSIONNUMBER 1.26
 
 // Define standard libraries used by maslow.
-#include <avr/io.h>
+#if not defined(ARDUINO_SAM_DUE) // Arduino Due
+  #include <avr/io.h>
+#endif
 #include <avr/interrupt.h>
 #include <Arduino.h>
 #include <Servo.h>

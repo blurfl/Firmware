@@ -253,6 +253,7 @@ void   setupAxes(){
         in1 = 4;         // OUTPUT - TLE9201 DIR
         in2 = 5;         // OUTPUT - TLE9201 ENABLE
         enA = 6;         // OUTPUT - TLE9201 PWM
+        ENA = enA;
 
         //MP2 - Z-axis
         encoder2A = 19;  // INPUT
@@ -260,6 +261,7 @@ void   setupAxes(){
         in3 = 7;         // OUTPUT - TLE9201 DIR
         in4 = 8;         // OUTPUT - TLE9201 ENABLE
         enB = 9;         // OUTPUT - TLE9201 PWM
+        ENB = enB;
 
         //MP3 - Left Motor
         encoder3A = 2;   // INPUT
@@ -267,6 +269,7 @@ void   setupAxes(){
         in5 = 11;        // OUTPUT - TLE9201 DIR
         in6 = 12;        // OUTPUT - TLE9201 ENABLE
         enC = 10;        // OUTPUT - TLE9201 PWM
+        ENC = enC;
 
         //AUX pins
         aux1 = 40;
@@ -314,7 +317,14 @@ void   setupAxes(){
         aux9 = 0;
     }
 
-
+    /*
+    * Set motor directions - Left and Right must turn in opposite directions, and 
+    * the setting chainOverSprocket reverses their directions. The Z motor is not
+    * affected by chainOverSprocket.
+    * The TLE9201 uses dedicated DIR, PWM and DISable pins,
+    * so logic from previous chips won't work. 
+    * The direction logic for the TLE9201 is handled in Motor::write()
+    */
     if(sysSettings.chainOverSprocket == 1){
         if (!TLE9201) {
             leftAxis.setup (enC, in6, in5, encoder3B, encoder3A, 'L', LOOPINTERVAL);

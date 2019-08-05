@@ -277,7 +277,7 @@ byte  executeBcodeLine(const String& gcodeLine){
             if (gcodeLine.indexOf('L') != -1){
                 leftAxis.motorGearboxEncoder.motor.directWrite(speed);
             }
-            else{
+            if (gcodeLine.indexOf('R') != -1){
                 rightAxis.motorGearboxEncoder.motor.directWrite(speed);
             }
             
@@ -285,10 +285,15 @@ byte  executeBcodeLine(const String& gcodeLine){
             execSystemRealtime();
             if (sys.stop){return STATUS_OK;}
         }
+        if (gcodeLine.indexOf('L') != -1){
+            leftAxis.motorGearboxEncoder.motor.directWrite(0);
+        }
+        if (gcodeLine.indexOf('R') != -1){
+            rightAxis.motorGearboxEncoder.motor.directWrite(0);
+        }
         bit_false(sys.state,STATE_POS_ERR_IGNORE);
         return STATUS_OK;
     }
-
     if(gcodeLine.substring(0, 3) == "B13"){
         //PID Testing of Velocity
         float  left       = extractGcodeValue(gcodeLine, 'L', 0);

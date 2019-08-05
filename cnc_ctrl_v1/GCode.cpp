@@ -254,9 +254,11 @@ byte  executeBcodeLine(const String& gcodeLine){
         //measure the left axis chain length
         Serial.print(F("[Measure: "));
         if (gcodeLine.indexOf('L') != -1){
+            Serial.print(F(" L "));
             Serial.print(leftAxis.read());
         }
-        else{
+        if (gcodeLine.indexOf('R') != -1){
+            Serial.print(F(" R "));
             Serial.print(rightAxis.read());
         }
         Serial.println(F("]"));

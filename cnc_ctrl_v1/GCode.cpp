@@ -271,7 +271,6 @@ byte  executeBcodeLine(const String& gcodeLine){
         double ms    = 1000*time;
         double begin = millis();
 
-        int i = 0;
         bit_true(sys.state,STATE_POS_ERR_IGNORE);
         while (millis() - begin < ms){
             if (gcodeLine.indexOf('L') != -1){
@@ -281,7 +280,6 @@ byte  executeBcodeLine(const String& gcodeLine){
                 rightAxis.motorGearboxEncoder.motor.directWrite(speed);
             }
             
-            i++;
             execSystemRealtime();
             if (sys.stop){return STATUS_OK;}
         }

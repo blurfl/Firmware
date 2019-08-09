@@ -38,6 +38,8 @@
 #include "pins_arduino.h"
 #endif
 
+#include "utility/direct_pin_read.h"
+
 #if defined(ENCODER_USE_INTERRUPTS) || !defined(ENCODER_DO_NOT_USE_INTERRUPTS)
 #define ENCODER_USE_INTERRUPTS
 #define ENCODER_ARGLIST_SIZE CORE_NUM_INTERRUPT
@@ -62,8 +64,8 @@ typedef struct {
 	IO_REG_TYPE            pin2_bitmask;
 	uint8_t                state;
 	int32_t                position;
-	int32_t						     elapsedTime;
-	int32_t							   lastTime;
+	int32_t                elapsedTime;
+	int32_t                lastTime;
 } Encoder_internal_state_t;
 
 class Encoder
@@ -134,6 +136,18 @@ public:
 		interrupts();
 		return ret;
 	}
+	inline int32_t readAndReset() {
+		if (interrupts_in_use < 2) {
+			noInterrupts();
+			update(&encoder);
+		} else {
+			noInterrupts();
+		}
+		int32_t ret = encoder.position;
+		encoder.position = 0;
+		interrupts();
+		return ret;
+	}
 	inline void write(int32_t p) {
 		noInterrupts();
 		encoder.position = p;
@@ -143,6 +157,12 @@ public:
 	inline int32_t read() {
 		update(&encoder);
 		return encoder.position;
+	}
+	inline int32_t readAndReset() {
+		update(&encoder);
+		int32_t ret = encoder.position;
+		encoder.position = 0;
+		return ret;
 	}
 	inline void write(int32_t p) {
 		encoder.position = p;
@@ -203,13 +223,12 @@ public:
 	}
 */
 
-private:
+public:
+	// update() is not meant to be called from outside Encoder,
+	// but it is public to allow static interrupt routines.
+	// DO NOT call update() directly from sketches.
 	static void update(Encoder_internal_state_t *arg) {
-#if defined(__AVR_DISABLED__)  
-		// Changed from __AVR__ to force C code below, until someone has 
-		// the chance to write the elapsedTime feature into assembly
-		// code.  The time difference between the two options is 
-		// minimal at best. 
+#if defined(__AVR__)
 		// The compiler believes this is just 1 line of code, so
 		// it will inline this function into each interrupt
 		// handler.  That's a tiny bit faster, but grows the code.
@@ -324,6 +343,7 @@ private:
 		}
 #endif
 	}
+private:
 /*
 #if defined(__AVR__)
 	// TODO: this must be a no inline function
@@ -970,6 +990,11 @@ ISR(INT6_vect) { Encoder::update(Encoder::interruptArgs[SCRAMBLE_INT_ORDER(6)]);
 ISR(INT7_vect) { Encoder::update(Encoder::interruptArgs[SCRAMBLE_INT_ORDER(7)]); }
 #endif
 #endif // AVR
+#if defined(attachInterrupt)
+// Don't intefere with other libraries or sketch use of attachInterrupt()
+// https://github.com/PaulStoffregen/Encoder/issues/8
+#undef attachInterrupt
+#endif
 #endif // ENCODER_OPTIMIZE_INTERRUPTS
 
 

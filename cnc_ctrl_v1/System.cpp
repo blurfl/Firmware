@@ -428,11 +428,11 @@ void setPWMPrescalers(int prescalerChoice) {
   }
   TCCR3B |= prescalerChoice;   // pins 2, 3, 5
   TCCR4B |= prescalerChoice;   // pins 6, 7, 8
-} #else {
+ #else 
   Serial.print(F("PWM frequency change only supported on Mega"));
   // Other platforms may already use higher PWM frequencies; in
   // any case they will need special handling.
-}
+
 #endif
 }
 
